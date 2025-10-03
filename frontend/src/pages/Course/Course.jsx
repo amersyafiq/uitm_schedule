@@ -72,9 +72,9 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
             try {
                 const campus = selectedCampus.value ? selectedCampus.value : ""
                 const faculty = selectedFaculty.value ? selectedFaculty.value : ""
-                const rawCode = await axios.get(`/api/icress/courses?campus=${campus}&session=${currSession}&faculty=${faculty}`, {
-                    headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-                })
+                // const rawCode = await axios.get(`/api/icress/courses?campus=${campus}&session=${currSession}&faculty=${faculty}`, {
+                //     headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
+                // })
 
                 setOptionsCode(
                     rawCode.data.results.map((item) => ({
@@ -93,7 +93,7 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
     const fetchCourses = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.get(`/api/courses?campus=${selectedCampus.value}&faculty=${selectedFaculty.value}&session=${currSession.session}&code=${selectedCourse.value}`);
+            // const response = await axios.get(`/api/courses?campus=${selectedCampus.value}&faculty=${selectedFaculty.value}&session=${currSession.session}&code=${selectedCourse.value}`);
             setCourses(
                 response.data.filter((course) =>                        // Exclude that course if course returned false
                     !schedCourses.some((sched) =>                   // Returns False if matches code, session & campus
@@ -165,9 +165,9 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
         const code = selectedCourse?.value ? selectedCourse.value : ''
         const session = currSession.session
         try {
-            await axios.post(`/api/courses?campus=${campus}&faculty=${faculty}&code=${code}&session=${session}`, {}, {
-                headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-            })
+            // await axios.post(`/api/courses?campus=${campus}&faculty=${faculty}&code=${code}&session=${session}`, {}, {
+            //     headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
+            // })
             fetchCourses()
             setSelectedCourse({ "value": '', "label": 'Select...' })
         } catch (err) {

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
+    "@netlify/vite-plugin": "^2.6.1",
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
     "ldrs": "^1.1.7",
