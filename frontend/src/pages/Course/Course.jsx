@@ -18,14 +18,14 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
 
     useEffect(() => {
         const fetchFilterData = async () => {
-            // const url =  "https://simsweb4.uitm.edu.my/estudent/class_timetable/cfc/select.cfc?method=FAC_lII1II11I1lIIII11IIl1I111I&key=All&page=1&page_limit=30";
-            // const res = await axios.get(url, {
-            // headers: {
-            //     "User-Agent": "Mozilla/5.0",
-            //     "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm"
-            // }})
+            const url =  "https://simsweb4.uitm.edu.my/estudent/class_timetable/cfc/select.cfc?method=FAC_lII1II11I1lIIII11IIl1I111I&key=All&page=1&page_limit=30";
+            const res = await axios.get(url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm"
+            }})
 
-            // console.log(res.data)
+            console.log(res.data)
             
             // try {
             //     const [rawCam, rawFac] = await Promise.all([
@@ -189,6 +189,7 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
     return (
         <DragDropContext onDragEnd={handleDragDrop}>
             <div className="flex w-full flex-col lg:flex-row">
+                    AAAAAAAAAAAAAAAa
                 <div className="flex flex-5 flex-col lg:flex-row p-3">
                     <div className="bg-white rounded-xl w-full shadow-sm p-8">
                         <CourseFilter
