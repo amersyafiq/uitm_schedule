@@ -27,7 +27,7 @@ export function CourseSelect({ isLoading, isLoadingSession, courses, fetchCourse
     }
 
     return (
-        <div className="overflow-scroll no-scrollbar relative bg-white mb-5 h-115">
+        <div className="overflow-scroll no-scrollbar relative bg-white mb-5 h-fit">
             <table className="w-full border-separate border-spacing-y-2">
                 <thead>
                     <tr className="text-sm text-stone-500">

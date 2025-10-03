@@ -3,7 +3,7 @@ import HeaderStepper from './HeaderStepper'
 
 export function Header() {
     return (
-        <header className="flex h-fit py-5 px-8 gap-5">
+        <header className="flex h-fit py-3 px-8 gap-5">
 
             {/* UiTM Schedule Generator Logo */}
             <div className='flex flex-col items-center justify-center'>

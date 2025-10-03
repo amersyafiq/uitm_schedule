@@ -65,11 +65,11 @@ export default function HeaderStepper() {
 
             {/* Labels */}
             <div className="text-center mt-3 flex flex-col items-start justify-start w-full">
-              <p className="text-xs font-semibold text-gray-700">STEP {step.id}</p>
-              <p className="font-bold text-gray-900">{step.title}</p>
+              <p className="text-xs font-semibold text-gray-700 leading-4">STEP {step.id}</p>
+              <p className="font-bold text-sm text-gray-900 leading-4">{step.title}</p>
               <p
                 className={`
-                  text-sm
+                  text-xs
                   ${status === "completed" ? "text-green-500" : ""}
                   ${status === "in-progress" ? "text-purple-500" : ""}
                   ${status === "pending" ? "text-gray-400" : ""}

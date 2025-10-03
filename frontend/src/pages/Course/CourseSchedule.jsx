@@ -2,7 +2,7 @@ import { Droppable, Draggable } from "@hello-pangea/dnd";
 
 export function CourseSchedule({ schedCourses, setSchedCourses }) {
     return (
-        <div className="overflow-scroll no-scrollbar relative bg-gray-100 shadow-inner h-full mb-5 p-6">
+        <div className="overflow-scroll no-scrollbar relative h-full mb-5">
             {schedCourses?.length > 0 &&
                 <div className="flex justify-end gap-2 mb-3">
                     <button
@@ -19,7 +19,7 @@ export function CourseSchedule({ schedCourses, setSchedCourses }) {
                     </button>
                 </div>
             }
-            <div className="mt-2 border-2 border-dashed rounded-lg border-stone-300 h-full" >
+            <div className="mt-2 border-2 border-dashed rounded-lg border-stone-300 h-fit bg-gray-100" >
                 <table className="w-full border-separate border-spacing-y-1 ">
                     <Droppable droppableId="schedule" type="group">
                         {(provided) => (

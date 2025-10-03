@@ -18,45 +18,30 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
 
     useEffect(() => {
         const fetchFilterData = async () => {
-            const url =  "https://simsweb4.uitm.edu.my/estudent/class_timetable/cfc/select.cfc?method=FAC_lII1II11I1lIIII11IIl1I111I&key=All&page=1&page_limit=30";
-            const res = await axios.get(url, {
-            headers: {
-                "User-Agent": "Mozilla/5.0",
-                "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm"
-            }})
+            const urlCampus = "https://simsweb4.uitm.edu.my/estudent/class_timetable/cfc/select.cfc?method=CAM_lII1II11I1lIIII11IIl1I111I&key=All&page=1&page_limit=30"
+            const urlFaculty = "https://simsweb4.uitm.edu.my/estudent/class_timetable/cfc/select.cfc?method=FAC_lII1II11I1lIIII11IIl1I111I&key=All&page=1&page_limit=30"
+            try {
+                const [rawCam, rawFac] = await Promise.all([
+                    await axios.get(`/.netlify/functions/proxy?url=${encodeURIComponent(urlCampus)}`),
+                    await axios.get(`/.netlify/functions/proxy?url=${encodeURIComponent(urlFaculty)}`),
+                ]);
 
-            console.log(res.data)
-            
-            // try {
-            //     const [rawCam, rawFac] = await Promise.all([
-            //         axios.get("https://simsweb4.uitm.edu.my/estudent/class_timetable/cfc/select.cfc?method=CAM_lII1II11I1lIIII11IIl1I111I&key=All&page=1&page_limit=30", {
-            //             headers: {
-            //                 'Content-Type': 'application/x-www-form-urlencoded',
-            //                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-            //                 'Referer': 'https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm'
-            //             },
-            //         }),
-            //         axios.get("/api/icress/faculty", {
-            //             headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-            //         }),
-            //     ]);
+                setOptionsCam(
+                    rawCam.data.results.map((item) => ({
+                        value: item.id,
+                        label: item.text,
+                    }))
+                );
 
-            //     setOptionsCam(
-            //         rawCam.data.results.map((item) => ({
-            //             value: item.id,
-            //             label: item.text,
-            //         }))
-            //     );
-
-            //     setOptionsFac(
-            //         rawFac.data.results.map((item) => ({
-            //             value: item.id,
-            //             label: item.text,
-            //         }))
-            //     );
-            // } catch (err) {
-            //     console.error("Error fetching filter data:", err.message);
-            // }
+                setOptionsFac(
+                    rawFac.data.results.map((item) => ({
+                        value: item.id,
+                        label: item.text,
+                    }))
+                );
+            } catch (err) {
+                console.error("Error fetching filter data:", err.message);
+            }
         };
 
         fetchFilterData();
@@ -66,15 +51,11 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
     useEffect(() => {
         setOptionsCode([])
         if (!selectedCampus || !selectedFaculty) return;
-        console.log(selectedCampus.value)
-        console.log(selectedFaculty.value)
         const fetchFilterCode = async () => {
             try {
                 const campus = selectedCampus.value ? selectedCampus.value : ""
                 const faculty = selectedFaculty.value ? selectedFaculty.value : ""
-                // const rawCode = await axios.get(`/api/icress/courses?campus=${campus}&session=${currSession}&faculty=${faculty}`, {
-                //     headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-                // })
+                const rawCode = await axios.get(`/.netlify/functions/courseCodes?campus=${campus}&faculty=${faculty}`)
 
                 setOptionsCode(
                     rawCode.data.results.map((item) => ({
@@ -189,9 +170,8 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
     return (
         <DragDropContext onDragEnd={handleDragDrop}>
             <div className="flex w-full flex-col lg:flex-row">
-                    AAAAAAAAAAAAAAAa
                 <div className="flex flex-5 flex-col lg:flex-row p-3">
-                    <div className="bg-white rounded-xl w-full shadow-sm p-8">
+                    <div className="bg-white rounded-xl w-full shadow-sm p-8 min-h-100">
                         <CourseFilter
                             currSession={currSession}
                             selectedCampus={selectedCampus}
@@ -216,8 +196,8 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
                     </div>
                 </div>
                 <div className="flex-2 flex-col lg:flex-row p-3">
-                    <div className="bg-white rounded-xl w-full">
-                        <div className='px-4 py-4 flex flex-col'>
+                    <div className="bg-white rounded-xl w-full p-8 h-full shadow-sm">
+                        <div className='flex flex-col mb-4'>
                             <h1 className='font-bold text-xs text-gray-400 mb-2'>SELECTED COURSES</h1>
                             <p className='leading-5'>Drag and drop the courses you wish to generate a schedule with </p>
                         </div>
@@ -225,7 +205,6 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
                             schedCourses={schedCourses}
                             setSchedCourses={setSchedCourses}
                         />
-                        <hr />
                     </div>
                 </div>
             </div>
