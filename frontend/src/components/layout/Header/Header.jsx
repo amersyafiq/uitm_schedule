@@ -1,7 +1,16 @@
 import uitmLogo from '../../../assets/uitm-logo.png'
 import HeaderStepper from './HeaderStepper'
+import { useState, useEffect } from 'react'
 
 export function Header() {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768) // True for mobile
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768)
+        window.addEventListener("resize", handleResize) // Mounts the event listener on load
+        return () => window.removeEventListener("resize", handleResize); // Unmounts it on navigation away
+    }, [])
+
     return (
         <header className="flex h-fit py-3 px-8 gap-5">
 
@@ -17,10 +26,16 @@ export function Header() {
                 </div>
             </div>
 
-            {/* Progress Step */}
-            <div className='flex-1 flex justify-center items-center relative'>
-                <HeaderStepper />
-            </div>
+            {/* Progress Step - Web Version */}
+            {
+                !isMobile ? (
+                    <div className='flex-1 flex justify-center items-center relative'>
+                        <HeaderStepper />
+                    </div>
+                ) : (
+                    <div>Test</div>
+                )
+            }
             
 
         </header>

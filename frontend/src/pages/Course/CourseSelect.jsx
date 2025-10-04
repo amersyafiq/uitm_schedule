@@ -30,7 +30,7 @@ export function CourseSelect({ isLoading, isLoadingSession, courses, fetchCourse
         <div className="overflow-scroll no-scrollbar relative bg-white mb-5 h-fit">
             <table className="w-full border-separate border-spacing-y-2">
                 <thead>
-                    <tr className="text-sm text-stone-500">
+                    <tr className="text-xs text-stone-500">
                         <th className="px-4 text-start w-15 py-2 bg-gray-100 rounded-l-lg">#</th>
                         <th className="px-2 text-start w-30 py-2 bg-gray-100">COURSE</th>
                         <th className="px-2 text-start w-25 py-2 bg-gray-100">SESSION</th>

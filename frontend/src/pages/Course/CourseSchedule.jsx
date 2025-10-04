@@ -2,7 +2,7 @@ import { Droppable, Draggable } from "@hello-pangea/dnd";
 
 export function CourseSchedule({ schedCourses, setSchedCourses }) {
     return (
-        <div className="overflow-scroll no-scrollbar relative h-full mb-5">
+        <div className="overflow-scroll no-scrollbar relative h-fit mb-5">
             {schedCourses?.length > 0 &&
                 <div className="flex justify-end gap-2 mb-3">
                     <button

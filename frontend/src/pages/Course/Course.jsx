@@ -73,16 +73,26 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
 
     const fetchCourses = async () => {
         setIsLoading(true);
+        const campus = selectedCampus?.value ? selectedCampus.value : ''
+        const faculty = selectedFaculty?.value ? selectedFaculty.value : ''
+        const code = selectedCourse?.value ? selectedCourse.value.split('.').join("") : ''
         try {
-            // const response = await axios.get(`/api/courses?campus=${selectedCampus.value}&faculty=${selectedFaculty.value}&session=${currSession.session}&code=${selectedCourse.value}`);
+            const saved = localStorage.getItem("courses");
+            let courses = saved ? JSON.parse(saved) : [];
             setCourses(
-                response.data.filter((course) =>                        // Exclude that course if course returned false
-                    !schedCourses.some((sched) =>                   // Returns False if matches code, session & campus
-                        sched.code === course.code &&
-                        sched.session === course.session &&
-                        sched.campus === course.campus
-                    )
-                )
+                courses.filter(course => {
+                                if (campus && course.campus !== campus) return false;
+                                if (faculty && course.faculty !== faculty) return false;
+                                if (code && course.code !== code) return false;
+                                return true;
+                              })
+                        .filter(course =>
+                                    !schedCourses.some(sched =>
+                                        sched.code === course.code &&
+                                        sched.session === course.session &&
+                                        sched.campus === course.campus
+                                    )
+                                )
             );
         } catch (err) {
             console.error("Error fetching courses:", err.message);
@@ -143,27 +153,21 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
         e.preventDefault()
         const campus = selectedCampus?.value ? selectedCampus.value : ''
         const faculty = selectedFaculty?.value ? selectedFaculty.value : ''
-        const code = selectedCourse?.value ? selectedCourse.value : ''
-        const session = currSession.session
+        const code = selectedCourse?.value ? selectedCourse.value.split('.').join("") : ''
         try {
-            // await axios.post(`/api/courses?campus=${campus}&faculty=${faculty}&code=${code}&session=${session}`, {}, {
-            //     headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-            // })
-            fetchCourses()
-            setSelectedCourse({ "value": '', "label": 'Select...' })
-        } catch (err) {
-            if (err.response) {
-                const { code, message } = err.response.data?.detail || {}
+            const response = await axios.get(`/.netlify/functions/addCourse?campus=${campus}&faculty=${faculty}&code=${code}`)
+            const addedCourse = response.data.results
 
-                switch (code) {
-                    case "EXISTING_COURSE":
-                    case "UNKNOWN_COURSE":
-                        alert(message)
-                        break
-                    default:
-                        alert(err.message)
-                }
-            }
+            const saved = JSON.parse(localStorage.getItem("courses") || "[]");
+            const updatedCourses = [...saved, addedCourse];
+
+            localStorage.setItem("courses", JSON.stringify(updatedCourses));
+            
+            setSelectedCourse({ "value": '', "label": 'Select...' })
+            fetchCourses()
+
+        } catch (err) {
+            alert(err.message)
         }
     }
 
