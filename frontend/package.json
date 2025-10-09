@@ -16,6 +16,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
     "cheerio": "^1.1.2",
+    "dayjs": "^1.11.18",
     "ldrs": "^1.1.7",
     "node-fetch": "^3.3.2",
     "react": "^19.1.1",

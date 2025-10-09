@@ -73,27 +73,28 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
 
     const fetchCourses = async () => {
         setIsLoading(true);
-        const campus = selectedCampus?.value ? selectedCampus.value : ''
-        const faculty = selectedFaculty?.value ? selectedFaculty.value : ''
-        const code = selectedCourse?.value ? selectedCourse.value.split('.').join("") : ''
+        const campus = selectedCampus?.value ? selectedCampus.value : null
+        const faculty = selectedFaculty?.value ? selectedFaculty.value : null
+        const code = selectedCourse?.value ? selectedCourse.value.split('.').join("") : null
+
         try {
             const saved = localStorage.getItem("courses");
             let courses = saved ? JSON.parse(saved) : [];
-            setCourses(
-                courses.filter(course => {
-                                if (campus && course.campus !== campus) return false;
-                                if (faculty && course.faculty !== faculty) return false;
-                                if (code && course.code !== code) return false;
-                                return true;
-                              })
-                        .filter(course =>
-                                    !schedCourses.some(sched =>
-                                        sched.code === course.code &&
-                                        sched.session === course.session &&
-                                        sched.campus === course.campus
-                                    )
-                                )
-            );
+            const updatedCourses = courses
+                .filter(course => {
+                    if (campus && course.campus !== campus) return false;
+                    if (faculty && course.faculty !== faculty) return false;
+                    if (code && course.code !== code) return false;
+                    return true;
+                })
+                .filter(course =>
+                    !schedCourses.some(sched =>
+                        sched.code === course.code &&
+                        sched.session === course.session &&
+                        sched.campus === course.campus
+                    )
+                )
+            setCourses(updatedCourses);
         } catch (err) {
             console.error("Error fetching courses:", err.message);
         } finally {
@@ -149,33 +150,11 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
         }
     };
 
-    const handleAddCourse = async (e) => {
-        e.preventDefault()
-        const campus = selectedCampus?.value ? selectedCampus.value : ''
-        const faculty = selectedFaculty?.value ? selectedFaculty.value : ''
-        const code = selectedCourse?.value ? selectedCourse.value.split('.').join("") : ''
-        try {
-            const response = await axios.get(`/.netlify/functions/addCourse?campus=${campus}&faculty=${faculty}&code=${code}`)
-            const addedCourse = response.data.results
-
-            const saved = JSON.parse(localStorage.getItem("courses") || "[]");
-            const updatedCourses = [...saved, addedCourse];
-
-            localStorage.setItem("courses", JSON.stringify(updatedCourses));
-            
-            setSelectedCourse({ "value": '', "label": 'Select...' })
-            fetchCourses()
-
-        } catch (err) {
-            alert(err.message)
-        }
-    }
-
     return (
         <DragDropContext onDragEnd={handleDragDrop}>
-            <div className="flex w-full flex-col lg:flex-row">
-                <div className="flex flex-5 flex-col lg:flex-row p-3">
-                    <div className="bg-white rounded-xl w-full shadow-sm p-8 min-h-100">
+            <div className="flex w-full flex-col lg:flex-row h-140 gap-y-4">
+                <div className="flex flex-5 flex-col lg:flex-row p-3 h-full">
+                    <div className="bg-white rounded-xl w-full shadow-sm p-8 h-full overflow-x-auto no-scrollbar">
                         <CourseFilter
                             currSession={currSession}
                             selectedCampus={selectedCampus}
@@ -189,21 +168,44 @@ export function Course({ currSession, isLoadingSession, schedCourses, setSchedCo
                             optionsCode={optionsCode}
                             courses={courses}
                             fetchCourses={fetchCourses}
-                            handleAddCourse={handleAddCourse}
                         />
                         <CourseSelect
                             isLoading={isLoading}
                             isLoadingSession={isLoadingSession}
                             courses={courses}
-                            fetchCourses={fetchCourses}
+                            handleRemoveCourse={handleRemoveCourse}
                         />
                     </div>
                 </div>
-                <div className="flex-2 flex-col lg:flex-row p-3">
-                    <div className="bg-white rounded-xl w-full p-8 h-full shadow-sm">
-                        <div className='flex flex-col mb-4'>
-                            <h1 className='font-bold text-xs text-gray-400 mb-2'>SELECTED COURSES</h1>
-                            <p className='leading-5'>Drag and drop the courses you wish to generate a schedule with </p>
+                <div className="flex-2 flex-col lg:flex-row p-3 h-full">
+                    <div className="bg-white rounded-xl w-full p-8 shadow-sm h-full">
+                        <div className='flex flex-col'>
+                            <div className='flex flex-col mb-4'>
+                                <h1 className='font-bold text-xs text-gray-400 mb-1'>SELECTED COURSES</h1>
+                                <p className='leading-5 text-justify'>Drag and drop the courses you wish to generate a schedule with </p>
+                            </div>
+                            {schedCourses?.length > 0 &&
+                                <div className="flex justify-end items-end gap-2 mb-1">
+                                    <button
+                                        className="flex flex-col items-center justify-center gap-1 w-15 h-15 bg-gray-100 border-gray-300 border-1 text-black px-3 py-1 rounded-sm cursor-pointer hover:bg-stone-200"
+                                        onClick={() => setSchedCourses([])}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                        </svg>
+                                        Clear
+                                    </button>
+                                    <button
+                                        className="flex flex-col items-center justify-center gap-1 w-15 h-15 bg-gray-100 border-gray-300 border-1 text-black px-3 py-1 rounded-sm cursor-pointer hover:bg-stone-200"
+                                        onClick={() => setSchedCourses([...schedCourses].sort((a, b) => a.code.localeCompare(b.code)))}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
+                                        </svg>
+                                        Sort
+                                    </button>
+                                </div>
+                            }
                         </div>
                         <CourseSchedule
                             schedCourses={schedCourses}

@@ -49,13 +49,13 @@ export async function handler(event, context) {
         $ = cheerio.load(response2.data)
 
         // ======================  Course data ========================
-        const scrapped_info = $('strong').first().html().replace(/<br\s*\/?>/g, ' ').trim().split(/\s+/);
-
-        //[ 'SESSION',':', '20254','-', 'COURSE','&nbsp;', ':', 'CSC577', 'CAMPUS',':', 'SELANGOR', 'FACULTY', ':','CD' ]
+        const scrapped_info = $('strong').first().html().replace(/&nbsp;/g, '').replace(/<br\s*\/?>/g, ' ').trim().split(/\s+/);
+        console.log(scrapped_info)
+        //[ 'SESSION', ':', '20254',   '-', 'COURSE',  ':', 'CSC577',  'CAMPUS', ':',       'SELANGOR', 'FACULTY', ':', 'CD' ]
         const scrapped_session = scrapped_info[2]
-        const scrapped_course = scrapped_info[7]
-        const scrapped_campus = scrapped_info[10] === 'SELANGOR' ? 'B' : scrapped_info[10]
-        const scrapped_faculty = scrapped_info[13] || ""
+        const scrapped_course = scrapped_info[6]
+        const scrapped_campus = campus                    //  scrapped_info[9] === 'SELANGOR' ? 'B' : scrapped_info[10]
+        const scrapped_faculty = scrapped_info[12] || ""
 
 
         // ======================  Classes data ========================

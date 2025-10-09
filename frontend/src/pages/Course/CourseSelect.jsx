@@ -1,34 +1,12 @@
 import { tailspin } from 'ldrs'
-import axios from 'axios';
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 
-export function CourseSelect({ isLoading, isLoadingSession, courses, fetchCourses }) {
+export function CourseSelect({ isLoading, isLoadingSession, courses, handleRemoveCourse }) {
     tailspin.register()
 
-    const handleDeleteCourse = async (code, session, campus, faculty) => {
-        try {
-            await axios.delete(`/api/courses?campus=${campus}&faculty=${faculty}&code=${code}&session=${session}`, {
-                headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-            })
-            fetchCourses()
-        } catch (err) {
-            if (err.response) {
-                const { code, message } = err.response.data?.detail || {}
-
-                switch (code) {
-                    case "COURSE_NOT_FOUND":
-                        alert(message)
-                        break
-                    default:
-                        alert(err.message)
-                }
-            }
-        }
-    }
-
     return (
-        <div className="overflow-scroll no-scrollbar relative bg-white mb-5 h-fit">
-            <table className="w-full border-separate border-spacing-y-2">
+        <div className="bg-white mb-5 overflow-x-auto xl:no-scrollbar h-110 m-1">
+            <table className="w-full border-separate border-spacing-y-2 min-w-max">
                 <thead>
                     <tr className="text-xs text-stone-500">
                         <th className="px-4 text-start w-15 py-2 bg-gray-100 rounded-l-lg">#</th>
@@ -63,27 +41,25 @@ export function CourseSelect({ isLoading, isLoadingSession, courses, fetchCourse
                                     >
                                         {(provided) => (
                                             <tr
-                                                className="bg-white rounded-lg overflow-hidden font-light select-none"
+                                                className="bg-white rounded-lg overflow-hidden font-light select-none hover:bg-purple-200 hover:border-purple-400 hover:border-2"
                                                 {...provided.dragHandleProps}
                                                 {...provided.draggableProps}
                                                 ref={provided.innerRef}
                                             >
-                                                <td className="py-3.5 px-4 border-b-1 border-gray-300 font-normal">{index + 1}</td>
-                                                <td className="py-3.5 px-2 border-b-1 border-gray-300">{course.code}</td>
-                                                <td className="py-3.5 px-2 border-b-1 border-gray-300">{course.session}</td>
-                                                <td className="py-3.5 px-2 border-b-1 border-gray-300">{course.campus}</td>
-                                                <td className="py-3.5 px-2 border-b-1 border-gray-300">{course.faculty}</td>
-                                                <td className="py-3.5 px-2 border-b-1 border-gray-300">{course.classes.length}</td>
-                                                <td className="py-3.5 px-2 border-b-1 border-gray-300 flex items-center">
-                                                    <svg
-                                                        onClick={() => { handleDeleteCourse(course.code, course.session, course.campus, course.faculty) }}
-                                                        className="hover:bg-gray-200 rounded-sm ml-auto p-0.5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none" viewBox="0 0 24 24"
-                                                    >
-                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                                                <td className="py-2 px-4 border-b-1 border-gray-300 font-normal">{index + 1}</td>
+                                                <td className="py-2 px-2 border-b-1 border-gray-300">{course.code}</td>
+                                                <td className="py-2 px-2 border-b-1 border-gray-300">{course.session}</td>
+                                                <td className="py-2 px-2 border-b-1 border-gray-300">{course.campus}</td>
+                                                <td className="py-2 px-2 border-b-1 border-gray-300">{course.faculty}</td>
+                                                <td className="py-2 px-2 border-b-1 border-gray-300">{course.classes.length}</td>
+                                                <td className="py-2 px-2 border-b-1 border-gray-300 flex gap-3 items-center text-[#555]">
+                                                    <svg 
+                                                        onClick={() => handleRemoveCourse(course.code, course.session, course.campus, course.faculty)}
+                                                        className="rounded-full hover:bg-gray-300 p-2 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
                                                     </svg>
-                                                    <svg className="hover:bg-gray-200 rounded-sm ml-auto mr-2 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                                                        <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
-                                                    </svg>
+                                                    <svg className="ml-auto" width="16" height="16" viewBox="-3 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M1.5 3.5C0.67157 3.5 0 2.82843 0 2C0 1.17157 0.67157 0.5 1.5 0.5C2.3284 0.5 3 1.17157 3 2C3 2.82843 2.3284 3.5 1.5 3.5zM1.5 8.5C0.67157 8.5 0 7.8284 0 7C0 6.1716 0.67157 5.5 1.5 5.5C2.3284 5.5 3 6.1716 3 7C3 7.8284 2.3284 8.5 1.5 8.5zM1.5 13.5C0.67157 13.5 0 12.8284 0 12C0 11.1716 0.67157 10.5 1.5 10.5C2.3284 10.5 3 11.1716 3 12C3 12.8284 2.3284 13.5 1.5 13.5zM6.5 3.5C5.6716 3.5 5 2.82843 5 2C5 1.17157 5.6716 0.5 6.5 0.5C7.3284 0.5 8 1.17157 8 2C8 2.82843 7.3284 3.5 6.5 3.5zM6.5 8.5C5.6716 8.5 5 7.8284 5 7C5 6.1716 5.6716 5.5 6.5 5.5C7.3284 5.5 8 6.1716 8 7C8 7.8284 7.3284 8.5 6.5 8.5zM6.5 13.5C5.6716 13.5 5 12.8284 5 12C5 11.1716 5.6716 10.5 6.5 10.5C7.3284 10.5 8 11.1716 8 12C8 12.8284 7.3284 13.5 6.5 13.5z" fill="#555" /></svg>
+                                                    &nbsp;
                                                 </td>
                                             </tr>
                                         )}
