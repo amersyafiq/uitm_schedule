@@ -3,6 +3,8 @@ import { CourseFilter } from './CourseFilter';
 import { useState } from 'react';
 
 export function Selector({ setSchedCourses, schedCourses, currSession, setErrorModal }) {
+    console.log(JSON.stringify(schedCourses))
+
     const [isDropCourse, setIsDropCourse] = useState(false)
 
     const handleSelectAll = (bool) => {

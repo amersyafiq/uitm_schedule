@@ -1,0 +1,30 @@
+
+export const basePayload = (campus, faculty = "", course = "") => {
+  return new URLSearchParams({
+    captcha_no_type: "llIlllIlIIllIlIIIIlllIlIll",
+    captcha1: "lIIlllIlIllIllIIIIIlIlllllIlIll",
+    captcha2: "lIIlllIlIllIlIIlIllIIIIlllIllll",
+    captcha3: "lIIlllIlIllIlIIlIllIIIIlllIllll",
+    token1: "lIIlllIlIllIllIIIIIlIlllllIlIll",
+    token2: "lIIlllIlIllIlIIlIllIIIIlllIllll",
+    token3: "lIIlllIlIllIlIIlIllIIIIlllIllll",
+    llIlllIlIIllIlIIIIlllIlIll: "lIIlllIlIllIlIIlIllIlIIIlllIlIll",
+    llIlllIlIIlllllIIIlllIlIll: "lIIllIlIlllIlIIlIllIIIIllllIlIll",
+    lIIlllIlIIlIllIIIIlllIlIll: "lIIlllIlIIlIllIIIIlIllIlllIlIll",
+    lIIlIlllIlIIllIlIIIIlllIlIllI: "lIIlIlllIlIIllIlIIIIlllIlIlllI",
+    lIIlIlllIlIIllIllIlIIIIlllIlIllI: "lIIlIlllIlIIllIllIlIIIIlllIlIllI",
+    lIIlIlllIlIIllIlIIIIlllIlIlllIlIllI: "lIIlIlllIlIIllIlIIIIlllIlIlllIlIllI",
+    lIIlIllIlIllllIlIIllIlIIIIlllIlIllI: "lIIlIllIlIllllIlIIllIlIIIIlllIlIllI",
+    lIIlIlllIlIIllllIlIIllIlIIIIlllIlIllI: "lIIlIlllIlIIllllIlIIllIllIIIIlllIlIllI",
+    lIIlIlllIlIIIlIlllIlIIllIlIIIIlllIlIllI: "lIllIlllIlIIIlIlllIlIIllIlIIIIlllIlIllI",
+    lIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI: "lIIlIlllIlIIllIlIlIIlIIllIlIIIIlIlIllllI",
+    llIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI: "lIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI",
+    lllIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI: "lIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI",
+    llllIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI: "lIIlIlllIlIIllIlIIIlIIllIlIIIIlllIlIllI",
+    llllIIlIlllIlIIlllllIIIlIIllIlIIIIlllIlIllIl: "llllIIlIlllIlIIlllllIIIlIIllIlIIIIlllIlIllI",
+    search_campus: campus || "",
+    search_faculty: faculty || "",
+    search_course: course || "",
+    lIIIlllIIllll: "lIIIlllIIllll",
+  });
+};
