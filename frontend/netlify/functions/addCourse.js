@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as cheerio from 'cheerio'
-import { basePayload } from "./utils/payload.js";
+import { URLSearchParams } from "url";
 
 export async function handler(event, context) {
     try {
@@ -9,14 +9,23 @@ export async function handler(event, context) {
         const faculty = params.faculty || ""
         const code = params.code || ""
 
-        const payload = basePayload(campus, faculty, code);
+        const iCress = await axios.get("http://localhost:8888/.netlify/functions/iCressMain")
+        const { payload: basePayload, cookies } = iCress.data
 
-        const url = "https://simsweb4.uitm.edu.my/estudent/class_timetable/index_result111.cfm"
+        const payload = new URLSearchParams({
+            ...basePayload,
+            search_campus: campus,
+            search_faculty: faculty,
+            search_course: code
+        });
+
+        const url = "https://simsweb4.uitm.edu.my/estudent/class_timetable/INDEX_RESULT_lII1II11I1lIIII11II1lI111I.cfm?id1=607544268228&id2=405028192000&id3=607542305511"
         const response = await axios.post(url, payload.toString(), {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": "Mozilla/5.0",
-                "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm"
+                "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm",
+                "Cookie": cookies
             }
         });
 
@@ -29,7 +38,8 @@ export async function handler(event, context) {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": "Mozilla/5.0",
-                "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm"
+                "Referer": "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.htm",
+                "Cookie": cookies
             }
         });
 

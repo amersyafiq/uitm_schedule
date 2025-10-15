@@ -7,7 +7,7 @@ export function Schedule({ schedule, isLoadingSched }) {
     const [show, setShow] = useState(false)
     const [modalData, setModalData] = useState({})
 
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
     tailspin.register()
 

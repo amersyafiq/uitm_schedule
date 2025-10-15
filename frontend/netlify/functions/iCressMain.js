@@ -1,16 +1,23 @@
 import * as cheerio from 'cheerio'
 import axios from 'axios'
+import { wrapper } from "axios-cookiejar-support";
+import { CookieJar } from "tough-cookie";
 
 export async function handler(event, context) {
     try {
-        const url = "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.cfm"
-        const res = await axios.get(url)
-        if (res.status !== 200) { throw new Error("iCress is currently inaccessible!"); }
+        const jar = new CookieJar();
+        const client = wrapper(axios.create({ jar }));
 
-        const setCookies = res.headers["set-cookie"] || [];
-        const cookieHeader = setCookies
-            .map((c) => c.split(";")[0])
-            .join("; ");
+        const url = "https://simsweb4.uitm.edu.my/estudent/class_timetable/index.cfm";
+        const res = await client.get(url, {
+        headers: {
+            "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+        },
+        });
+        const cookies = await jar.getCookies(url);
 
         let $ = cheerio.load(res.data)
         const payload = {}
@@ -45,7 +52,7 @@ export async function handler(event, context) {
             },
             body: JSON.stringify({
                 payload: payload,
-                cookies: cookieHeader
+                cookies: cookies
             })
         };
     } catch (err) {

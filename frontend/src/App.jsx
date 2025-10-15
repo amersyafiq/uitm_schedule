@@ -22,15 +22,11 @@ function App() {
     setIsLoadingSchedOut(true)
     try {
       const priority = selectedPriority.value ? selectedPriority.value : 0;
-      const response = await axios.post(`/api/generate?arrangement_priority=${priority}`, schedCourses, {
-        headers: { "X-API-Key": "67b09141-e39e-4e86-a729-fc45940c93e3" },
-      })
+      const response = await axios.post(`/.netlify/functions/generate?arrangement_priority=${priority}`, schedCourses)
       setScheduleOut(response.data)
     } catch (err) {
-
       if (err.response) {
-        const { code, message, clashes } = err.response.data?.detail || {}
-
+        const { code, message, clashes } = err.response.data || {}
         switch (code) {
           case "NO_CLASSES_SELECTED":
           case "INVALID_PRIORITY":
