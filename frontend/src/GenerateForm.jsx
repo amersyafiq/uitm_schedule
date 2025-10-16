@@ -67,6 +67,7 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                     <div className='flex gap-2 items-center mr-3'>
                         <input 
                             onChange={() => setHasNight(!hasNight)}
+                            value={hasNight}
                             type="checkbox" 
                             id="nightCheckbox" 
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
@@ -75,6 +76,7 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                     <div className='flex gap-2 items-center mr-3'>
                         <input 
                             onChange={() => setHasWeekend(!hasWeekend)}
+                            value={hasWeekend}
                             type="checkbox" 
                             id="weekendCheckbox" 
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />

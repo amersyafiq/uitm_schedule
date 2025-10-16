@@ -158,16 +158,10 @@ class DataScraper {
             const allowed_class_groups = selectedCourse?.classes
                 ?.filter(cg => cg.select === true)
                 .map(cg => cg.class_group) ?? [];
+            console.log(allowed_class_groups)
 
             if (!Array.isArray(allowed_class_groups) || allowed_class_groups.length === 0) {
-                return {
-                    statusCode: 422,
-                    headers: { "Access-Control-Allow-Origin": "*" },
-                    body: JSON.stringify({
-                        "code": "NO_CLASSES_SELECTED",
-                        "message": "Please select at least one class for every course"
-                    }),
-                };
+                throw new Error("NO_CLASSES_SELECTED");
             }
 
             const jar = new CookieJar();
@@ -258,7 +252,6 @@ class DataScraper {
             }
         }
 
-        this.#classes = returnClasses;
         return returnClasses;
     }
 
@@ -477,31 +470,36 @@ class GeneticAlgorithm {
 }
 
 function find_fittest_schedule(scraper, arrangement) {
-    let generation_number = 0;
     const genetic_algorithm = new GeneticAlgorithm(scraper);
+
+    let generation_number = 0;
+    let plateau_count = 0;             // number of consecutive generations without improvement
+    const MAX_GENERATIONS = 250;       // absolute limit (safety stop)
+    const MAX_PLATEAU = 50;            // stop if no improvement for 30 gens
 
     // GA STEP 1: Initialize a random population
     let population = new Population(POPULATION_SIZE, scraper);
 
     // GA STEP 2: Fitness evaluation
     population.get_schedules().sort(
-        (a, b) => b.get_fitness(arrangement) - a.get_fitness(arrangement) // Sort by descending order
+        (a, b) => b.get_fitness(arrangement) - a.get_fitness(arrangement)
     );
-    let best_schedule = population.get_schedules()[0];    // Top schedule should have the highest fitness
+
+    let best_schedule = population.get_schedules()[0];
     let best_fitness = best_schedule.get_fitness(arrangement);
     let best_generation = 0;
 
-    // GA STEP 7: Termination
-    while (best_fitness != 1.10 && generation_number != 250) { // Limit to 100 generations only
-        generation_number += 1;
+    // GA LOOP: Until plateau or limit
+    while (generation_number < MAX_GENERATIONS && plateau_count < MAX_PLATEAU) {
+        generation_number++;
 
         // GA STEP 3, 4, 5: Selection, Crossover, Mutation
         population = genetic_algorithm.evolve(population, arrangement);
 
-        // Only return the schedule with the best fitness from all 100 generations
         population.get_schedules().sort(
             (a, b) => b.get_fitness(arrangement) - a.get_fitness(arrangement)
         );
+
         const current_schedule = population.get_schedules()[0];
         const current_fitness = current_schedule.get_fitness(arrangement);
 
@@ -509,12 +507,16 @@ function find_fittest_schedule(scraper, arrangement) {
             best_schedule = current_schedule;
             best_fitness = current_fitness;
             best_generation = generation_number;
+            plateau_count = 0; // reset plateau since improvement occurred
+        } else {
+            plateau_count++; // no improvement this generation
         }
     }
 
     return { schedule: best_schedule, generation: best_generation, generation_number: generation_number };
 }
 
+// Check for classes clash if user chose 1 class per course only
 function find_clash(schedule) {
     const clashed = [];
     for (let i = 0; i < schedule.get_classes().length; i++) {
@@ -579,14 +581,25 @@ export async function handler(event, context) {
         };
 
     } catch (err) {
-        return {
-            statusCode: 500,
-            headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({
-                error: err.message,
-                line: err.stack?.split('\n')[1]?.trim() || "unknown",
-                stack: err.stack
-            }),
-        };
+        if (err.message === "NO_CLASSES_SELECTED") {
+            return {
+                statusCode: 422,
+                headers: { "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({
+                    code: "NO_CLASSES_SELECTED",
+                    message: "Please select at least one class for every course"
+                }),
+            };
+        } else {
+            return {
+                statusCode: 500,
+                headers: { "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({
+                    error: err.message,
+                    line: err.stack?.split('\n')[1]?.trim() || "unknown",
+                    stack: err.stack
+                }),
+            };
+        }
     }
 }
