@@ -3,7 +3,7 @@ import { useState } from "react"
 import { ScheduleItemModal } from "./ScheduleItemModal.jsx";
 import { tailspin } from 'ldrs'
 
-export function Schedule({ schedule, isLoadingSched, hasWeekend, hasNight }) {
+export function Schedule({ schedule, isLoadingSched, hasWeekend, hasNight, ref }) {
     const [show, setShow] = useState(false)
     const [modalData, setModalData] = useState({})
 
@@ -12,7 +12,9 @@ export function Schedule({ schedule, isLoadingSched, hasWeekend, hasNight }) {
     tailspin.register()
 
     return (
-        <div className="overflow-scroll no-scrollbar relative bg-white border-t-1 border-gray-300 mb-2">
+        <div 
+            ref={ref}
+            className="overflow-scroll no-scrollbar relative bg-white border-t-1 border-gray-300 mb-2">
             {
                 isLoadingSched ? (
                     <div className="flex justify-center items-center h-95 ">

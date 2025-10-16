@@ -158,7 +158,6 @@ class DataScraper {
             const allowed_class_groups = selectedCourse?.classes
                 ?.filter(cg => cg.select === true)
                 .map(cg => cg.class_group) ?? [];
-            console.log(allowed_class_groups)
 
             if (!Array.isArray(allowed_class_groups) || allowed_class_groups.length === 0) {
                 throw new Error("NO_CLASSES_SELECTED");
@@ -167,7 +166,8 @@ class DataScraper {
             const jar = new CookieJar();
             const client = wrapper(axios.create({ jar }));
 
-            const iCress = await client.get("http://localhost:8888/.netlify/functions/iCressMain")
+            const baseUrl = process.env.URL || "http://localhost:8888";
+            const iCress = await axios.get(`${baseUrl}/.netlify/functions/iCressMain`)
             const { payload: basePayload, cookies } = iCress.data
 
             const cookieString = cookies

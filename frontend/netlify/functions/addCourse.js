@@ -9,7 +9,8 @@ export async function handler(event, context) {
         const faculty = params.faculty || ""
         const code = params.code || ""
 
-        const iCress = await axios.get("http://localhost:8888/.netlify/functions/iCressMain")
+        const baseUrl = process.env.URL || "http://localhost:8888";
+        const iCress = await axios.get(`${baseUrl}/.netlify/functions/iCressMain`)
         const { payload: basePayload, cookies } = iCress.data
 
         const payload = new URLSearchParams({

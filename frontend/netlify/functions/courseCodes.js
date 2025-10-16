@@ -14,7 +14,8 @@ export async function handler(event, context) {
         const jar = new CookieJar();
         const client = wrapper(axios.create({ jar }));
 
-        const iCress = await client.get("http://localhost:8888/.netlify/functions/iCressMain")
+        const baseUrl = process.env.URL || "http://localhost:8888";
+        const iCress = await axios.get(`${baseUrl}/.netlify/functions/iCressMain`)
         const { payload: basePayload, cookies } = iCress.data
 
         const cookieString = cookies

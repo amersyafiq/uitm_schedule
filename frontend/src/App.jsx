@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Header } from "./components/layout/Header/Header";
 import { Schedule } from "./components/schedule/Schedule";
 import { Selector } from './Selector';
@@ -7,7 +7,6 @@ import { GenerateForm } from "./GenerateForm";
 import { GenerateError } from "./GenerateError";
 
 function App() {
-  const [schedTitle, setSchedTitle] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('');
   const [scheduleOut, setScheduleOut] = useState([]);
   const [isLoadingSchedOut, setIsLoadingSchedOut] = useState(false)
@@ -19,6 +18,8 @@ function App() {
   });
   const [hasWeekend, setHasWeekend] = useState(false)
   const [hasNight, setHasNight] = useState(false)
+
+  const scheduleRef = useRef(null);
 
   const handleFetchSchedule = async () => {
     setIsLoadingSchedOut(true)
@@ -58,7 +59,7 @@ function App() {
         const response = await axios.get('/.netlify/functions/session')
         setCurrSession(response.data)
       } catch (err) {
-        console.log(err.message)
+        setErrorModal([...errorModal, "Unable to fetch current session"])
       }
     }
 
@@ -76,15 +77,19 @@ function App() {
         <div className="flex w-full flex-col lg:flex-row">
 
           {/* Courses and Classes Selector */}
-          <Selector schedCourses={schedCourses} setSchedCourses={setSchedCourses} currSession={currSession} setErrorModal={setErrorModal} />
+          <Selector 
+            schedCourses={schedCourses} 
+            setSchedCourses={setSchedCourses}
+            currSession={currSession} 
+            setErrorModal={setErrorModal} 
+          />
 
           {/* Generate Schedule */}
           <div className="flex-6 p-3">
             <div className="bg-white rounded-xl w-full pb-3 relative">
               <div className="flex flex-col px-6 py-6">
                 <GenerateForm
-                  schedTitle={schedTitle}
-                  setSchedTitle={setSchedTitle}
+                  scheduleRef={scheduleRef}
                   selectedPriority={selectedPriority}
                   setSelectedPriority={setSelectedPriority}
                   scheduleOut={scheduleOut}
@@ -93,14 +98,25 @@ function App() {
                   hasWeekend={hasWeekend}
                   setHasNight={setHasNight}
                   hasNight={hasNight}
+                  setErrorModal={setErrorModal}
+                  errorModal={errorModal}
                 />
               </div>
-              <Schedule schedule={scheduleOut.schedule} isLoadingSched={isLoadingSchedOut} hasWeekend={hasWeekend} hasNight={hasNight} />
+              <Schedule 
+                ref={scheduleRef}
+                schedule={scheduleOut.schedule} 
+                isLoadingSched={isLoadingSchedOut} 
+                hasWeekend={hasWeekend} 
+                hasNight={hasNight} />
               <div className='fixed right-3 bottom-3 flex flex-col gap-2'>
                 {
                   errorModal.map((err, idx) => {
                     return (
-                      <GenerateError key={idx} err={err} setErrorModal={setErrorModal} idx={idx} />
+                      <GenerateError 
+                        key={idx} 
+                        err={err} 
+                        setErrorModal={setErrorModal} 
+                        idx={idx} />
                     );
                   })
                 }

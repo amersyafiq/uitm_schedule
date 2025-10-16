@@ -1,7 +1,35 @@
 import { style } from './utils/select';
+import { useState } from 'react';
 import Select from 'react-select'
+import html2canvas from 'html2canvas-pro';
 
-export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setSelectedPriority, scheduleOut, handleFetchSchedule, hasWeekend, setHasWeekend, hasNight, setHasNight }) {
+export function GenerateForm({ scheduleRef, selectedPriority, setSelectedPriority, scheduleOut, handleFetchSchedule, hasWeekend, setHasWeekend, hasNight, setHasNight, setErrorModal, errorModal }) {
+    const [schedTitle, setSchedTitle] = useState('');
+
+    const handleCaptureSchedule = async (e) => {
+        e.preventDefault();
+        if (!scheduleRef.current) {
+            setErrorModal([...errorModal, "Schedule is not found!"])
+            return;
+        }
+
+        if(schedTitle === '') {
+            setErrorModal([...errorModal, "Schedule title cannot be empty"])
+            return;
+        }
+
+        const canvas = await html2canvas(scheduleRef.current, {
+            backgroundColor: "#ffffff",
+            scale: 2,
+        });
+
+        const dataUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = `${schedTitle}.png`;
+        link.click()
+    }
+
     return (
         <form>
             <div className='flex gap-4 flex-col lg:flex-row'>
@@ -17,7 +45,6 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                         className='border border-solid border-gray-300 rounded h-7 text-sm py-1 px-3 placeholder:text-[#808080] hover:border-[#2684FF] focus-visible:outline-none focus-visible:border-[#2684FF] '
                         type='text'
                         placeholder='e.g., My Schedule'
-                        required
                         value={schedTitle}
                         onChange={(e) => setSchedTitle(e.target.value)}
                     />
@@ -32,7 +59,6 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                         className='lg:w-fit border border-solid border-gray-300 bg-[#f2f2f2] rounded h-7 text-sm py-1 px-3 placeholder:text-[#808080] hover:border-[#2684FF] focus-visible:outline-none focus-visible:border-[#2684FF] '
                         type='text'
                         placeholder='e.g., My Schedule'
-                        required
                         disabled
                         value={20254}
                     />
@@ -56,7 +82,6 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                                 label: "Evening Priority"
                             }]}
                         isSearchable={false}
-                        required
                         className="text-sm"
                         styles={style}
                     />
@@ -64,23 +89,23 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
             </div>
             <div className='flex justify-end mt-3 gap-2 items-center flex-col xl:flex-row gap-y-3'>
                 <div className='flex'>
-                    <div className='flex gap-2 items-center mr-3'>
-                        <input 
+                    <div className='flex gap-2 items-center mr-3 select-none'>
+                        <input
                             onChange={() => setHasNight(!hasNight)}
                             value={hasNight}
-                            type="checkbox" 
-                            id="nightCheckbox" 
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                        <label htmlFor="nightCheckbox" className="text-sm">Night Classes</label>
+                            type="checkbox"
+                            id="nightCheckbox"
+                            className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <label htmlFor="nightCheckbox" className="text-sm cursor-pointer">Night Classes</label>
                     </div>
-                    <div className='flex gap-2 items-center mr-3'>
-                        <input 
+                    <div className='flex gap-2 items-center mr-3 select-none'>
+                        <input
                             onChange={() => setHasWeekend(!hasWeekend)}
                             value={hasWeekend}
-                            type="checkbox" 
-                            id="weekendCheckbox" 
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                        <label htmlFor="weekendCheckbox" className="text-sm">Include Weekend</label>
+                            type="checkbox"
+                            id="weekendCheckbox"
+                            className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <label htmlFor="weekendCheckbox" className="text-sm cursor-pointer">Include Weekend</label>
                     </div>
                 </div>
                 {
@@ -110,7 +135,7 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                             </button>
                             <button
                                 className="flex items-center gap-2 bg-green-600 text-white px-3 py-1 rounded-sm cursor-pointer hover:bg-green-500"
-                                onClick={() => { }}
+                                onClick={handleCaptureSchedule}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
