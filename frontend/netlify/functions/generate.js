@@ -4,6 +4,7 @@ import { day_mapping } from "./utils/day.js";
 import { choice } from "./utils/random.js";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
+import { handler as iCressMainHandler } from "./iCressMain.js";
 
 // ============================================================
 //                  GENETIC ALGORITHM STEPS
@@ -166,9 +167,8 @@ class DataScraper {
             const jar = new CookieJar();
             const client = wrapper(axios.create({ jar }));
 
-            const baseUrl = process.env.URL || "http://localhost:8888";
-            const iCress = await axios.get(`${baseUrl}/.netlify/functions/iCressMain`)
-            const { payload: basePayload, cookies } = iCress.data
+            const iCressResponse = await iCressMainHandler(); 
+            const { payload: basePayload, cookies } = JSON.parse(iCressResponse.body);
 
             const cookieString = cookies
                 .map((c) => `${c.key}=${c.value}`)

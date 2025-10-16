@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio'
 import { URLSearchParams } from "url";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
+import { handler as iCressMainHandler } from "./iCressMain.js";
 
 export async function handler(event, context) {
     try {
@@ -14,9 +15,8 @@ export async function handler(event, context) {
         const jar = new CookieJar();
         const client = wrapper(axios.create({ jar }));
 
-        const baseUrl = process.env.URL || "http://localhost:8888";
-        const iCress = await axios.get(`${baseUrl}/.netlify/functions/iCressMain`)
-        const { payload: basePayload, cookies } = iCress.data
+        const iCressResponse = await iCressMainHandler(); 
+        const { payload: basePayload, cookies } = JSON.parse(iCressResponse.body);
 
         const cookieString = cookies
             .map((c) => `${c.key}=${c.value}`)
@@ -47,7 +47,7 @@ export async function handler(event, context) {
 
         const code_array = [];
         $("tr.gradeU").each((i, tr) => {
-            const td = $(tr).find("td").eq(1).text().trim().replace(".","");
+            const td = $(tr).find("td").eq(1).text().trim().replace(".", "");
             if (td) code_array.push(td);
         });
 
@@ -64,7 +64,11 @@ export async function handler(event, context) {
         return {
             statusCode: 500,
             headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ error: err.message }),
+            body: JSON.stringify({
+                error: err.message,
+                line: err.stack?.split('\n')[1]?.trim() || "unknown",
+                stack: err.stack
+            }),
         };
     }
 }

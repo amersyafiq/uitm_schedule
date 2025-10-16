@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as cheerio from 'cheerio'
 import { URLSearchParams } from "url";
+import { handler as iCressMainHandler } from "./iCressMain.js";
 
 export async function handler(event, context) {
     try {
@@ -9,9 +10,8 @@ export async function handler(event, context) {
         const faculty = params.faculty || ""
         const code = params.code || ""
 
-        const baseUrl = process.env.URL || "http://localhost:8888";
-        const iCress = await axios.get(`${baseUrl}/.netlify/functions/iCressMain`)
-        const { payload: basePayload, cookies } = iCress.data
+        const iCressResponse = await iCressMainHandler(); 
+        const { payload: basePayload, cookies } = JSON.parse(iCressResponse.body);
 
         const payload = new URLSearchParams({
             ...basePayload,
