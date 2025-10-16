@@ -80,14 +80,12 @@ export function CourseFilter({ currSession, schedCourses, loadCourses, setErrorM
                 const stored = localStorage.getItem("sched_courses");
                 if (stored && stored.trim() !== "") {
                     saved = JSON.parse(stored);
-                    if (!Array.isArray(saved)) saved = []; // ensure it's an array
+                    if (!Array.isArray(saved)) saved = [];
                 }
             } catch (err) {
                 console.warn("Failed to parse sched_courses, resetting:", err);
                 saved = [];
             }
-
-            console.log("aaaa" + saved)
 
             // Prevent adding more than 9 courses
             if (saved.length >= 9) {

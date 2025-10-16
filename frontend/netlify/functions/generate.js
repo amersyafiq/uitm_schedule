@@ -474,8 +474,8 @@ function find_fittest_schedule(scraper, arrangement) {
 
     let generation_number = 0;
     let plateau_count = 0;             // number of consecutive generations without improvement
-    const MAX_GENERATIONS = 250;       // absolute limit (safety stop)
-    const MAX_PLATEAU = 50;            // stop if no improvement for 30 gens
+    const MAX_GENERATIONS = 15;       // absolute limit (safety stop)
+    const MAX_PLATEAU = 5;            // stop if no improvement for 30 gens
 
     // GA STEP 1: Initialize a random population
     let population = new Population(POPULATION_SIZE, scraper);
