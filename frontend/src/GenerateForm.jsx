@@ -1,7 +1,7 @@
 import { style } from './utils/select';
 import Select from 'react-select'
 
-export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setSelectedPriority, scheduleOut, handleFetchSchedule }) {
+export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setSelectedPriority, scheduleOut, handleFetchSchedule, hasWeekend, setHasWeekend, hasNight, setHasNight }) {
     return (
         <form>
             <div className='flex gap-4 flex-col lg:flex-row'>
@@ -62,7 +62,25 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
                     />
                 </div>
             </div>
-            <div className='flex justify-end mt-3 gap-2 items-center'>
+            <div className='flex justify-end mt-3 gap-2 items-center flex-col xl:flex-row gap-y-3'>
+                <div className='flex'>
+                    <div className='flex gap-2 items-center mr-3'>
+                        <input 
+                            onChange={() => setHasNight(!hasNight)}
+                            type="checkbox" 
+                            id="nightCheckbox" 
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <label htmlFor="nightCheckbox" className="text-sm">Night Classes</label>
+                    </div>
+                    <div className='flex gap-2 items-center mr-3'>
+                        <input 
+                            onChange={() => setHasWeekend(!hasWeekend)}
+                            type="checkbox" 
+                            id="weekendCheckbox" 
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <label htmlFor="weekendCheckbox" className="text-sm">Include Weekend</label>
+                    </div>
+                </div>
                 {
                     scheduleOut?.length == 0 ? (
                         <button
@@ -104,7 +122,7 @@ export function GenerateForm({ schedTitle, setSchedTitle, selectedPriority, setS
             </div>
             {
                 (scheduleOut?.length != 0) &&
-                <div className='flex gap-2 mt-3'>
+                <div className='flex gap-2 mt-3 justify-center xl:justify-start'>
                     <p className='bg-gray-300 text-xs rounded-2xl px-3 py-1'>Fitness: {scheduleOut.fitness}</p>
                     <p className='bg-gray-300 text-xs rounded-2xl px-3 py-1'>Generation: {scheduleOut.generation} / {scheduleOut.generation_number}</p>
                     <p className='bg-gray-300 text-xs rounded-2xl px-3 py-1'>No clash found</p>

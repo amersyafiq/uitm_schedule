@@ -17,6 +17,8 @@ function App() {
     const saved = localStorage.getItem("sched_courses");
     return saved ? JSON.parse(saved) : [];
   });
+  const [hasWeekend, setHasWeekend] = useState(false)
+  const [hasNight, setHasNight] = useState(false)
 
   const handleFetchSchedule = async () => {
     setIsLoadingSchedOut(true)
@@ -70,7 +72,7 @@ function App() {
 
   return (
     <>
-      <main className="flex justify-center h-full xl:px-30 pt-4">
+      <main className={`flex justify-center h-full pt-4 ${!hasNight && 'xl:px-30'}`}>
         <div className="flex w-full flex-col lg:flex-row">
 
           {/* Courses and Classes Selector */}
@@ -87,9 +89,13 @@ function App() {
                   setSelectedPriority={setSelectedPriority}
                   scheduleOut={scheduleOut}
                   handleFetchSchedule={handleFetchSchedule}
+                  setHasWeekend={setHasWeekend}
+                  hasWeekend={hasWeekend}
+                  setHasNight={setHasNight}
+                  hasNight={hasNight}
                 />
               </div>
-              <Schedule schedule={scheduleOut.schedule} isLoadingSched={isLoadingSchedOut} />
+              <Schedule schedule={scheduleOut.schedule} isLoadingSched={isLoadingSchedOut} hasWeekend={hasWeekend} hasNight={hasNight} />
               <div className='fixed right-3 bottom-3 flex flex-col gap-2'>
                 {
                   errorModal.map((err, idx) => {

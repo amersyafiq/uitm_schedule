@@ -16,15 +16,36 @@ export function ScheduleItem({ c, setShow, setModalData }) {
 
     const position = {
         "08:00": "left-25",
+        "08:30": "left-33.75",
         "09:00": "left-42.5",
+        "09:30": "left-51.25",
         "10:00": "left-60",
+        "10:30": "left-68.75",
         "11:00": "left-77.5",
+        "11:30": "left-86.25",
         "12:00": "left-95",
+        "12:30": "left-103.75",
         "13:00": "left-112.5",
+        "13:30": "left-121.25",
         "14:00": "left-130",
+        "14:30": "left-138.75",
         "15:00": "left-147.5",
+        "15:30": "left-156.25",
         "16:00": "left-165",
-    }
+        "16:30": "left-173.75",
+        "17:00": "left-182.5",
+        "17:30": "left-191.25",
+        "18:00": "left-200",
+        "18:30": "left-208.75",
+        "19:00": "left-217.5",
+        "19:30": "left-226.25",
+        "20:00": "left-235",
+        "20:30": "left-243.75",
+        "21:00": "left-252.5",
+        "21:30": "left-261.25",
+        "22:00": "left-270"
+    };
+
 
     const length = {
         1: "w-18",
@@ -35,7 +56,7 @@ export function ScheduleItem({ c, setShow, setModalData }) {
     const colorMapParams = ((c.class_id * 7) - 1) % 10 + 1;
 
     return (
-        <div 
+        <div
             className={`${position[c.timeslot.start_time]} ${length[diffHours(c.timeslot.start_time, c.timeslot.end_time)]} 
                         absolute h-20 p-1 flex flex-col justify-center`}
             onClick={() => {

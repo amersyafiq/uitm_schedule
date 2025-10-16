@@ -155,13 +155,11 @@ class DataScraper {
                     c.session === course.get_session()
             );
 
-            const allowed_class_groups = selectedCourse
-                ? selectedCourse.classes
-                    .filter(cg => cg.select)
-                    .map(cg => cg.class_group)
-                : [];
+            const allowed_class_groups = selectedCourse?.classes
+                ?.filter(cg => cg.select === true)
+                .map(cg => cg.class_group) ?? [];
 
-            if (allowed_class_groups.length == 0) {
+            if (!Array.isArray(allowed_class_groups) || allowed_class_groups.length === 0) {
                 return {
                     statusCode: 422,
                     headers: { "Access-Control-Allow-Origin": "*" },
@@ -248,8 +246,6 @@ class DataScraper {
                         mode,
                         status
                     );
-
-                    console.log({ dayText, class_group })
 
                     if (!classTimeslot[class_group]) classTimeslot[class_group] = [];
                     classTimeslot[class_group].push(timeslot);
@@ -352,12 +348,12 @@ class Schedule {
         for (const c of classes) {
             for (const t of c.get_timeslots()) {
                 if (arrangement == 1) {
-                    if (t.get_start_time < "12:00") {
+                    if (t.get_start_time() < "12:00") {
                         bonus_point += 1;
                     }
                 }
                 if (arrangement == 2) {
-                    if (t.get_start_time > "12:00") {
+                    if (t.get_start_time() > "12:00") {
                         bonus_point += 1;
                     }
                 }
@@ -496,7 +492,7 @@ function find_fittest_schedule(scraper, arrangement) {
     let best_generation = 0;
 
     // GA STEP 7: Termination
-    while (best_fitness != 1.10 && generation_number != 500) { // Limit to 100 generations only
+    while (best_fitness != 1.10 && generation_number != 250) { // Limit to 100 generations only
         generation_number += 1;
 
         // GA STEP 3, 4, 5: Selection, Crossover, Mutation
@@ -526,9 +522,7 @@ function find_clash(schedule) {
             for (const t1 of schedule.get_classes()[i].get_timeslots()) {
                 for (const t2 of schedule.get_classes()[j].get_timeslots()) {
                     if (Schedule.timeslots_overlap(t1, t2)) {
-                        clashed.push(
-                            new Conflict([schedule.get_classes()[i].get_course().get_code(), schedule.get_classes()[j].get_course().get_code()])
-                        )
+                        clashed.push([schedule.get_classes()[i].get_course().get_code(), schedule.get_classes()[j].get_course().get_code()])
                     }
                 }
             }

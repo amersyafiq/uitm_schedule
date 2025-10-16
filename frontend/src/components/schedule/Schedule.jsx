@@ -3,11 +3,11 @@ import { useState } from "react"
 import { ScheduleItemModal } from "./ScheduleItemModal.jsx";
 import { tailspin } from 'ldrs'
 
-export function Schedule({ schedule, isLoadingSched }) {
+export function Schedule({ schedule, isLoadingSched, hasWeekend, hasNight }) {
     const [show, setShow] = useState(false)
     const [modalData, setModalData] = useState({})
 
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    const days = hasWeekend ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["Mon", "Tue", "Wed", "Thu", "Fri"]
 
     tailspin.register()
 
@@ -29,7 +29,17 @@ export function Schedule({ schedule, isLoadingSched }) {
                                     <th className="font-light w-35 text-start">12:00</th>
                                     <th className="font-light w-35 text-start">14:00</th>
                                     <th className="font-light w-35 text-start">16:00</th>
-                                    <th className="font-light text-start w-20">18:00</th>
+                                    {
+                                        hasNight ? (
+                                            <>
+                                                <th className="font-light w-35 text-start">18:00</th>
+                                                <th className="font-light w-35 text-start">20:00</th>
+                                                <th className="font-light text-start w-20">22:00</th>
+                                            </>
+                                        ) : (
+                                            <th className="font-light text-start w-20">18:00</th>
+                                        )
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,6 +52,12 @@ export function Schedule({ schedule, isLoadingSched }) {
                                             <td className="bg-gray-50 border-stone-200 border-l-1"></td>
                                             <td className="bg-gray-50 border-stone-200 border-l-1"></td>
                                             <td className="bg-gray-50 border-stone-200 border-l-1 border-r-1"></td>
+                                            { hasNight &&
+                                                <>
+                                                    <td className="bg-gray-50 border-stone-200 border-l-1"></td>
+                                                    <td className="bg-gray-50 border-stone-200 border-l-1 border-r-1"></td>
+                                                </> 
+                                            }
                                             <td className="h-15 text-center">&nbsp;</td>
                                         </tr>
                                     );
@@ -52,7 +68,14 @@ export function Schedule({ schedule, isLoadingSched }) {
                             <div className="absolute w-full h-full left-0 bottom-0" >
                                 {days.map((day, index) => {
                                     return (
-                                        <ScheduleRow key={day} index={index} classes={schedule[String(index + 1)]} setShow={setShow} setModalData={setModalData} />
+                                        <ScheduleRow 
+                                            key={day} 
+                                            index={index} 
+                                            classes={schedule[String(index + 1)]} 
+                                            setShow={setShow} 
+                                            setModalData={setModalData}
+                                            hasNight={hasNight}
+                                        />
                                     );
                                 })}
                             </div>
